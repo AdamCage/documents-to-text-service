@@ -1,0 +1,40 @@
+env: "TEST" # "PROD"
+
+service_info:
+  name: "DocumentsToTextService"
+  version: "0.0.0"
+
+cert_path: null
+
+s3_bucket_name: "documents_to_text_service"
+
+db_connection_pool:
+  echo: false
+  pool_size: 10
+  max_overflow: 20
+  pool_timeout: 30
+  pool_recycle: 1800
+
+db_scheme: dtts
+
+model:
+  framework: easyocr # easyocr # tesseract
+
+  # EasyOCR
+  init_params:
+    lang_list: ["en", "ru"] # Default: ["en", "ru"]. Supported languages: https://www.jaided.ai/easyocr
+    quantize: false # true # false
+  readtext_params:
+    paragraph: true
+
+  # Tesseract
+  # languages: rus
+  # model_uri: C:\Program Files\Tesseract-OCR\tesseract.exe
+  # psm_mode: 6
+
+logger:
+  file_name_template: documents_to_text_service.log
+  timed_rotating_file_when: midnight
+  interval: 1
+  encoding: utf-8
+  log_format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
