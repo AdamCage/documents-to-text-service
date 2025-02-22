@@ -1,4 +1,5 @@
 from .exceptions import *
+from .handel_error_500_exception import *
 
 
 __all__ = [
@@ -7,5 +8,8 @@ __all__ = [
     "TextExtractionError",
     "S3UploadingError",
     "BytesConvertingError",
-    "DataBaseWritingError"
+    "DataBaseWritingError",
+
+    # .handel_error_500_exception
+    "handel_error_500_exception"
 ]

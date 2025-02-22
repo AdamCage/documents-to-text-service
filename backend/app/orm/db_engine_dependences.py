@@ -4,11 +4,12 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
+from sqlalchemy.future import select
 from dotenv import dotenv_values
 
-from .models import Base
+from .models import Base, DocumentType
 from utils import get_logger
-from core import config
+from core import config, dict_tables_dict
 
 
 logger = get_logger(__name__)
@@ -41,14 +42,31 @@ class DBEngine:
 
 
     async def init_db(self):
-        """_summary_
-        """
+        """Initialize the database schema and tables, and populate initial data."""
         async with self.engine.begin() as conn:
             await conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {config.db_scheme};"))
             logger.info("DB schema created.")
 
             await conn.run_sync(Base.metadata.create_all)
             logger.info("DB tables created.")
+
+        async with self.get_session() as session:
+            # Начальные значения для DocumentType
+            document_types = [
+                {"document": "Паспорт РФ", "code": 1},
+                {"document": "СНИЛС", "code": 2},
+                {"document": "Заграничный паспорт РФ", "code": 3},
+            ]
+
+            for doc in document_types:
+                existing_doc = await session.execute(select(DocumentType).filter_by(code=doc["code"]))
+                if not existing_doc.scalars().first():
+                    new_doc_type = DocumentType(document=doc["document"], code=doc["code"])
+                    session.add(new_doc_type)
+                    logger.info(f"Added document type: {doc['document']}")
+
+            await session.commit()
+            logger.info("DocumentType table populated.")
 
 
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:

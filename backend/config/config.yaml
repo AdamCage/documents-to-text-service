@@ -32,6 +32,12 @@ model:
   # model_uri: C:\Program Files\Tesseract-OCR\tesseract.exe
   # psm_mode: 6
 
+llm_config:
+  use_llm: true # true # false
+  prompts_path: app\core\llm_formater_promts
+  llm_request_params:
+    temperature: 0.7 # Default: 0.7
+
 logger:
   file_name_template: documents_to_text_service.log
   timed_rotating_file_when: midnight
