@@ -4,7 +4,7 @@ from dotenv import dotenv_values
 import numpy as np
 
 from validation_models import ExtractTextFromImageRequestModel, ExtractTextFromPDFRequestModel
-from core import config, http_format
+from core import config
 
 
 @dataclass
@@ -82,9 +82,9 @@ class S3ObjectsPathsAndUrls:
         url = self._create_s3_url
 
         return {
-            "original": f'{url}/{self.original_file_url}',
-            "processed": f'{url}/{self.processed_image_url}',
-            "extracted_text": f'{url}/{self.extracted_text_url}'
+            "original": f'{url}/{self.original.url}',
+            "processed": f'{url}/{self.processed.url}',
+            "extracted_text": f'{url}/{self.extracted_text.url}'
         }
     
 
@@ -98,7 +98,7 @@ class S3ObjectsPathsAndUrls:
         port = dotenv_values["S3_PORT"]
         bucket = config.s3_bucket_name
 
-        return f'{http_format}://{host}:{port}/{bucket}'
+        return f'{host}:{port}/{bucket}'
 
 
 def init_s3_objects(

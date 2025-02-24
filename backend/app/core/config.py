@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from utils.files_handlers import load_yaml
+import yaml
 
 
 class Config:
@@ -15,7 +15,9 @@ class Config:
 
 
 config_dir = Path(__file__).resolve().parent.parent.parent / "config"
-config_dict = load_yaml(config_dir / "config.yaml")
+
+with open(config_dir / "config.yaml", "r") as file:
+    config_dict = yaml.safe_load(file)
+
 
 config = Config(**config_dict)
-http_format = "http" if config.cert_path is None else "https"

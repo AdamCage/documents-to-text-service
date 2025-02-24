@@ -5,7 +5,7 @@ from .v1 import v1_routers
 
 app_routers = APIRouter()
 
-app_routers.include_router(v1_routers, prefix="/v1")
+app_routers.include_router(v1_routers, prefix="/api")
 
 
 __all__ = [

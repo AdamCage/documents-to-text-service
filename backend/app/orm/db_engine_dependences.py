@@ -9,7 +9,7 @@ from dotenv import dotenv_values
 
 from .models import Base, DocumentType
 from utils import get_logger
-from core import config, dict_tables_dict
+from core import config, DocumentTypeEnum
 
 
 logger = get_logger(__name__)
@@ -51,15 +51,11 @@ class DBEngine:
             logger.info("DB tables created.")
 
         async with self.get_session() as session:
-            # Начальные значения для DocumentType
-            document_types = [
-                {"document": "Паспорт РФ", "code": 1},
-                {"document": "СНИЛС", "code": 2},
-                {"document": "Заграничный паспорт РФ", "code": 3},
-            ]
+            document_types = DocumentTypeEnum.get_document_types()
 
             for doc in document_types:
                 existing_doc = await session.execute(select(DocumentType).filter_by(code=doc["code"]))
+
                 if not existing_doc.scalars().first():
                     new_doc_type = DocumentType(document=doc["document"], code=doc["code"])
                     session.add(new_doc_type)

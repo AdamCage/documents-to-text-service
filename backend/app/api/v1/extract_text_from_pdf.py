@@ -18,18 +18,19 @@ async def extract_text_from_pdf(
         id: str = Form(...),
         user_id: str = Form(...),
         content_type: str = Form(...),
+        document_type_code: int = Form(...),
         file: UploadFile = File(...),
         db_session: AsyncSession = Depends(db_engine.get_session)
     ) -> ExtractTextFromPDFResponseModel:
-    request_body = ExtractTextFromPDFRequestModel(id=id, user_id=user_id, content_type=content_type)
+    request_body = ExtractTextFromPDFRequestModel(id=id, user_id=user_id, content_type=content_type, document_type_code=document_type_code)
 
     images = await pdf_converter.convert_file(file)
 
-    pipeline_result = text_from_pdf_pipeline(request_body, images, db_session, logger)
+    pipeline_result = await text_from_pdf_pipeline(request_body, images, db_session, logger)
 
     response = ExtractTextFromPDFResponseModel(
         request_id=request_body.id,
-        response_id=pipeline_result.response_id,
+        response_id=pipeline_result.id,
         extracted_text=pipeline_result.extracted_text
     )
 

@@ -15,7 +15,6 @@ class ImagePreprocessor:
     def __init__(self, logger: logging.Logger) -> None:
         self.logger = logger
         self.processors = [
-            # AutoCropper(),
             RotationCorrector(),
             GrayscaleConverter()
         ]

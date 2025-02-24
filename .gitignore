@@ -166,7 +166,7 @@ cython_debug/
 *.pickle
 
 # logs
-*.log
+logs/
 
 # images
 *.pdf

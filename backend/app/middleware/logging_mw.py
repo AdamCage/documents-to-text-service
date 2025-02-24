@@ -1,6 +1,8 @@
+from json import JSONDecodeError
+from typing import Callable, Awaitable
+
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-from typing import Callable, Awaitable
 
 from utils.logger import get_logger
 
@@ -16,16 +18,18 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     """
 
     async def dispatch(self, request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
-        """_summary_
+        if request.method != "OPTIONS":
+            if "multipart/form-data" in request.headers.get("content-type", ""):
+                body = "<FILE CONTENT>"
 
-        Args:
-            request (Request): _description_
-            call_next (Callable[[Request], Awaitable[Response]]): _description_
-
-        Returns:
-            Response: _description_
-        """
-        logger.info(f'Received request: Method - {request.method} URL - {request.url} Headers - {request.headers} BodyJSON - {request.json()}')
-        response: Response = await call_next(request)
+            else:
+                try:
+                    body = await request.json()
+                    
+                except JSONDecodeError:
+                    body = await request.body()
+            
+            logger.info(f'Received request: Method - {request.method} URL - {request.url} Headers - {request.headers} Body - {body}')
         
+        response = await call_next(request)
         return response
