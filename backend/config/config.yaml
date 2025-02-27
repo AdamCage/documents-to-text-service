@@ -35,7 +35,7 @@ model:
 llm_config:
   llm_request_params:
     stream: false
-    model: deepseek-r1:8b
+    model: deepseek-r1:70b
     format: json
   cert_path: false
 
